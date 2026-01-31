@@ -158,6 +158,77 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* Password Modal */
+        .pass-modal {
+            display: none;
+            position: fixed;
+            z-index: 10001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pass-modal-content {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            position: relative;
+        }
+
+        .pass-modal h3 {
+            margin-bottom: 20px;
+            color: #1c1d1f;
+            font-weight: 700;
+        }
+
+        .pass-input {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 15px 0;
+            border: 2px solid #f0f2f5;
+            border-radius: 8px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .pass-input:focus {
+            border-color: #ffb606;
+        }
+
+        .pass-btn {
+            background: #ffb606;
+            color: #fff;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.3s;
+        }
+
+        .pass-btn:hover {
+            background: #e6a405;
+        }
+
+        .pass-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 20px;
+            cursor: pointer;
+            color: #b2bec3;
+        }
     </style>
     <link rel="stylesheet" type="text/css" href="styles/support_widget.css">
     <link rel="stylesheet" type="text/css" href="styles/zalo_qr_modal.css">
@@ -282,6 +353,21 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Password Modal HTML -->
+        <div id="passwordModal" class="pass-modal">
+            <div class="pass-modal-content">
+                <span class="pass-close" onclick="closePassModal()">&times;</span>
+                <i class="fas fa-lock" style="font-size: 40px; color: #ffb606; margin-bottom: 15px;"></i>
+                <h3 id="modal-cat-name">Yêu cầu mật khẩu</h3>
+                <p>Nội dung này đã được khóa. Vui lòng nhập mật khẩu để xem.</p>
+                <input type="password" id="category-pass-input" class="pass-input"
+                    placeholder="Nhập mật khẩu tại đây...">
+                <button class="pass-btn" onclick="verifyCategoryPass()">Xác nhận</button>
+                <p id="pass-error" style="color: #d63031; font-size: 13px; margin-top: 10px; display: none;">Mật khẩu
+                    không chính xác!</p>
             </div>
         </div>
 
@@ -510,16 +596,62 @@
             container.innerHTML = '';
 
             categories.forEach(cat => {
+                const isLocked = cat.isLocked === true || cat.isLocked === 'TRUE' || cat.isLocked === '1';
                 const a = document.createElement('a');
-                a.href = 'courses.html';
+                a.href = 'javascript:void(0)';
                 a.className = 'category_link';
+
+                // Cố định link hoặc gọi hàm check
+                a.onclick = function () {
+                    if (isLocked) {
+                        openPassModal(cat.id, cat.name, cat.password);
+                    } else {
+                        window.location.href = 'courses.html?category=' + encodeURIComponent(cat.name);
+                    }
+                };
+
                 a.innerHTML = `
                     <i class="${cat.icon || 'fas fa-folder'}"></i>
                     <span>${cat.name}</span>
+                    ${isLocked ? '<i class="fas fa-lock" style="margin-left: auto; font-size: 12px; color: #b2bec3;"></i>' : ''}
                 `;
                 container.appendChild(a);
             });
         }
+
+        let currentCatData = null;
+
+        function openPassModal(id, name, correctPass) {
+            currentCatData = { id, name, correctPass };
+            document.getElementById('modal-cat-name').innerText = name;
+            document.getElementById('passwordModal').style.display = 'flex';
+            document.getElementById('category-pass-input').value = '';
+            document.getElementById('category-pass-input').focus();
+            document.getElementById('pass-error').style.display = 'none';
+        }
+
+        function closePassModal() {
+            document.getElementById('passwordModal').style.display = 'none';
+            currentCatData = null;
+        }
+
+        function verifyCategoryPass() {
+            const input = document.getElementById('category-pass-input').value;
+            if (input === currentCatData.correctPass) {
+                // Lưu quyền truy cập vào sessionStorage (chỉ trong phiên làm việc này)
+                sessionStorage.setItem('access_' + currentCatData.id, 'true');
+                window.location.href = 'courses.html?category=' + encodeURIComponent(currentCatData.name);
+            } else {
+                document.getElementById('pass-error').style.display = 'block';
+                document.getElementById('category-pass-input').classList.add('shake');
+                setTimeout(() => document.getElementById('category-pass-input').classList.remove('shake'), 500);
+            }
+        }
+
+        // Enter key to submit
+        document.getElementById('category-pass-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') verifyCategoryPass();
+        });
 
         function filterCategories(query) {
             const links = document.querySelectorAll('.category_link');
