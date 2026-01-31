@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     // Chuyển hướng dựa trên Role
                     setTimeout(() => {
-                        if (data.role === 'admin') {
+                        if (data.role === 'admin' || data.role === 'manager') {
                             window.location.href = 'admin.html';
                         } else {
                             window.location.reload();

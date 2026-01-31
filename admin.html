@@ -114,7 +114,7 @@
         .main-content {
             margin-left: var(--sidebar-width);
             flex-grow: 1;
-            padding: 40px;
+            padding: 25px;
             min-height: 100vh;
             transition: all 0.4s;
         }
@@ -301,7 +301,7 @@
 
         th {
             text-align: left;
-            padding: 15px 20px;
+            padding: 15px 12px;
             color: #636e72;
             font-size: 13px;
             text-transform: uppercase;
@@ -310,7 +310,7 @@
         }
 
         td {
-            padding: 18px 20px;
+            padding: 15px 12px;
             background: var(--white);
             font-size: 15px;
             color: var(--dark);
@@ -573,6 +573,55 @@
         }
 
         /* Security Check Overlay */
+        /* Role Badges */
+        .role-badge {
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        .role-admin {
+            background: rgba(214, 48, 49, 0.1);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .role-manager {
+            background: rgba(9, 132, 227, 0.1);
+            color: var(--info);
+            border: 1px solid var(--info);
+        }
+
+        /* Table Optimization */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        #logs-table td:nth-child(4) {
+            max-width: 350px;
+            white-space: normal;
+            word-wrap: break-word;
+            font-size: 13px;
+            color: #636e72;
+        }
+
+        /* Adjustments for smaller screens */
+        @media (max-width: 1200px) {
+            .main-content {
+                padding: 15px;
+            }
+
+            .stat-card .value {
+                font-size: 24px;
+            }
+        }
+
         #security-overlay {
             position: fixed;
             top: 0;
@@ -600,7 +649,7 @@
     <script>
         (function () {
             const role = localStorage.getItem('userRole');
-            if (role !== 'admin') {
+            if (role !== 'admin' && role !== 'manager') {
                 alert('Bạn không có quyền truy cập trang này!');
                 window.location.href = 'index.html';
             } else {
@@ -636,7 +685,7 @@
                 <div onclick="showSection('orders')" class="menu-item" id="menu-orders"><i
                         class="fas fa-shopping-cart"></i> Đơn hàng</div>
             </li>
-            <li>
+            <li class="admin-only">
                 <div onclick="showSection('logs')" class="menu-item" id="menu-logs"><i class="fas fa-history"></i> Logs
                     hoạt động</div>
             </li>
@@ -662,7 +711,7 @@
     <div class="main-content">
         <div class="header">
             <div class="welcome-text">
-                <h1 id="admin_name">Chào mừng, Admin!</h1>
+                <h1 id="admin_name" style="display: flex; align-items: center;">Chào mừng, Admin!</h1>
                 <p style="color: #6a6f73; margin: 0;">Hệ thống quản trị trực tiếp trên Web.</p>
             </div>
         </div>
@@ -680,7 +729,7 @@
                     <h3>Khóa học đã bán</h3>
                     <div class="value" id="stat-orders">0</div>
                 </div>
-                <div class="stat-card">
+                <div class="stat-card admin-only">
                     <div class="stat-icon icon-users"><i class="fas fa-user-graduate"></i></div>
                     <h3>Học viên</h3>
                     <div class="value" id="stat-users">0</div>
@@ -692,7 +741,7 @@
                 </div>
             </div>
 
-            <div class="card">
+            <div class="card admin-only">
                 <div class="card-header">
                     <h2 class="card-title">Hoạt động gần đây</h2>
                 </div>
@@ -1005,6 +1054,7 @@
                     <label>Vai trò hệ thống</label>
                     <select id="edit_user_role" class="modern-input">
                         <option value="user">Học viên (User)</option>
+                        <option value="manager">Quản lý (Manager)</option>
                         <option value="admin">Quản trị viên (Admin)</option>
                     </select>
                 </div>
@@ -1093,17 +1143,32 @@
     <script src="js/jquery-3.2.1.min.js"></script>
     <script src="js/google_sheets.js"></script>
     <script>
-        document.getElementById('admin_name').innerText = 'Chào mừng, ' + (localStorage.getItem('userName') || 'Admin') + '!';
+        const userName = localStorage.getItem('userName') || 'Admin';
+        const userRole = localStorage.getItem('userRole') || 'user';
+        const roleLabel = userRole === 'admin' ? 'Quản trị viên' : (userRole === 'manager' ? 'Quản lý' : 'Học viên');
+        const roleClass = userRole === 'admin' ? 'role-admin' : (userRole === 'manager' ? 'role-manager' : '');
+
+        document.getElementById('admin_name').innerHTML = `Chào mừng, ${userName}! <span class="role-badge ${roleClass}">${roleLabel}</span>`;
         document.getElementById('admin_email').innerText = localStorage.getItem('userEmail');
 
         var allCourses = [];
         var allUsers = [];
 
         function showSection(sectionId) {
+            const role = localStorage.getItem('userRole');
+
+            // Chặn truy cập trái phép nếu là Manager
+            if (role === 'manager' && sectionId === 'logs') {
+                showToast('Bạn không có quyền truy cập mục này!', 'error');
+                showSection('dashboard');
+                return;
+            }
+
             document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
             document.getElementById(sectionId + '-section').classList.add('active');
             document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
-            document.getElementById('menu-' + sectionId).classList.add('active');
+            const menuItem = document.getElementById('menu-' + sectionId);
+            if (menuItem) menuItem.classList.add('active');
 
             // Lưu section hiện tại vào localStorage
             localStorage.setItem('currentAdminSection', sectionId);
@@ -1122,7 +1187,18 @@
 
         // Khôi phục section khi tải trang
         window.addEventListener('DOMContentLoaded', function () {
+            const role = localStorage.getItem('userRole');
             const savedSection = localStorage.getItem('currentAdminSection') || 'dashboard';
+
+            // Ẩn các mục menu không dành cho Manager
+            if (role === 'manager') {
+                document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
+                if (savedSection === 'logs') {
+                    showSection('dashboard');
+                    return;
+                }
+            }
+
             showSection(savedSection);
         });
 
@@ -1479,17 +1555,23 @@
         function renderUsers(users) {
             const tbody = document.getElementById('user_list_body');
             tbody.innerHTML = '';
+            const currentRole = localStorage.getItem('userRole');
+
             users.forEach(u => {
                 const tr = document.createElement('tr');
+                const isProtected = u.role === 'admin' || u.role === 'manager';
+                const showActions = currentRole === 'admin' || (currentRole === 'manager' && !isProtected);
+
                 tr.innerHTML = `
                     <td style="font-weight: 600;">${u.name || 'N/A'}</td>
                     <td style="color: #636e72;">${u.email}</td>
                     <td><span class="status-badge ${u.role === 'admin' ? 'status-success' : 'status-info'}">${u.role}</span></td>
                     <td>
-                        <div class="action-btns">
+                        <div class="action-btns" style="${showActions ? '' : 'display: none;'}">
                             <button class="btn-action btn-edit" onclick="showEditUserModal('${u.email}')" title="Sửa"><i class="fas fa-edit"></i></button>
                             <button class="btn-action btn-delete" onclick="deleteUser('${u.email}')" title="Xóa"><i class="fas fa-trash-alt"></i></button>
                         </div>
+                        ${!showActions ? '<span style="font-size: 12px; color: #b2bec3; font-style: italic;">Hệ thống</span>' : ''}
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -1517,6 +1599,17 @@
             document.getElementById('edit_user_password').placeholder = 'Nhập mật khẩu cho user mới';
 
             document.getElementById('userModal').style.display = 'flex';
+
+            // Nếu là Manager, khóa phần phân quyền
+            const role = localStorage.getItem('userRole');
+            if (role === 'manager') {
+                document.getElementById('edit_user_role').value = 'user';
+                document.getElementById('edit_user_role').disabled = true;
+                document.getElementById('edit_user_role').style.background = '#f1f2f6';
+            } else {
+                document.getElementById('edit_user_role').disabled = false;
+                document.getElementById('edit_user_role').style.background = '#fff';
+            }
         }
 
         function showEditUserModal(email) {
@@ -1533,6 +1626,16 @@
             document.getElementById('edit_user_password').placeholder = 'Để trống nếu không muốn đổi';
 
             document.getElementById('userModal').style.display = 'flex';
+
+            // Nếu là Manager, khóa phần phân quyền
+            const role = localStorage.getItem('userRole');
+            if (role === 'manager') {
+                document.getElementById('edit_user_role').disabled = true;
+                document.getElementById('edit_user_role').style.background = '#f1f2f6';
+            } else {
+                document.getElementById('edit_user_role').disabled = false;
+                document.getElementById('edit_user_role').style.background = '#fff';
+            }
         }
 
         function closeUserModal() {
