@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Course - Giỏ hàng</title>
+    <meta charset="utf-8">
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Course Project">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="styles/bootstrap4/bootstrap.min.css">
+    <link href="plugins/fontawesome-free-5.0.1/css/fontawesome-all.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="styles/main_styles.css">
+    <link rel="stylesheet" type="text/css" href="styles/main_responsive.css">
+    <link rel="stylesheet" type="text/css" href="styles/google_sheets.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fa;
+            color: #1c1d1f;
+        }
+
+        /* Fixed Header - White Theme */
+        .header {
+            top: 0 !important;
+            width: 100% !important;
+            left: 0 !important;
+            transform: none !important;
+            background: #ffffff !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+            border-bottom: 1px solid #d1d7dc;
+        }
+
+        .header_content {
+            width: calc(100% - 279px) !important;
+        }
+
+        .main_nav_item a {
+            color: #1c1d1f !important;
+            font-weight: 600;
+        }
+
+        .logo span {
+            color: #1c1d1f !important;
+        }
+
+        .header_side {
+            background: #ffb606 !important;
+        }
+
+        .header_side span {
+            color: #ffffff !important;
+        }
+
+        .cart_nav_item {
+            margin-left: 20px;
+        }
+
+        .cart_nav_item i {
+            color: #1c1d1f !important;
+            font-size: 20px;
+        }
+
+        .cart_count {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 20px;
+            height: 20px;
+            background: #a435f0 !important;
+            color: #ffffff !important;
+            border-radius: 50%;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        /* Cart Page Content */
+        .cart_section {
+            padding: 140px 0 100px 0;
+        }
+
+        .cart_title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+
+        .cart_list_container {
+            background: #ffffff;
+            border: 1px solid #d1d7dc;
+            padding: 0;
+        }
+
+        .cart_item {
+            display: flex;
+            padding: 20px;
+            border-bottom: 1px solid #d1d7dc;
+            align-items: center;
+        }
+
+        .cart_item:last-child {
+            border-bottom: none;
+        }
+
+        .cart_item_img {
+            width: 120px;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+            margin-right: 20px;
+        }
+
+        .cart_item_info {
+            flex-grow: 1;
+        }
+
+        .cart_item_title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #1c1d1f;
+        }
+
+        .cart_item_author {
+            font-size: 12px;
+            color: #6a6f73;
+        }
+
+        .cart_item_price {
+            font-size: 18px;
+            font-weight: 700;
+            color: #a435f0;
+            margin-left: 20px;
+            min-width: 100px;
+            text-align: right;
+        }
+
+        .cart_item_remove {
+            color: #a435f0;
+            font-size: 14px;
+            cursor: pointer;
+            margin-left: 20px;
+            text-decoration: underline;
+        }
+
+        .cart_summary {
+            background: #ffffff;
+            border: 1px solid #d1d7dc;
+            padding: 24px;
+        }
+
+        .summary_title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #6a6f73;
+        }
+
+        .total_price {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .checkout_btn {
+            width: 100%;
+            height: 48px;
+            background: #a435f0;
+            color: #ffffff;
+            border: none;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .checkout_btn:hover {
+            background: #8710d8;
+        }
+
+        .empty_cart_msg {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty_cart_msg i {
+            font-size: 64px;
+            color: #d1d7dc;
+            margin-bottom: 20px;
+        }
+
+        .continue_shopping {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #1c1d1f;
+            color: #ffffff;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        @media (max-width: 991px) {
+            .header_content {
+                width: 100% !important;
+            }
+
+            .header_side {
+                display: none !important;
+            }
+
+            .cart_summary {
+                margin-top: 30px;
+            }
+        }
+
+        /* Checkout Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 30px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #6a6f73;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #1c1d1f;
+        }
+
+        .checkout-form input,
+        .checkout-form textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #d1d7dc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .checkout-form button {
+            width: 100%;
+            padding: 14px;
+            background: #a435f0;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .checkout-form button:hover {
+            background: #8710d8;
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="styles/support_widget.css">
+    <link rel="stylesheet" type="text/css" href="styles/zalo_qr_modal.css">
+</head>
+
+<body>
+
+    <div class="super_container">
+
+        <!-- Custom Toast HTML -->
+        <div id="toast-overlay" class="toast-overlay"></div>
+        <div id="toast" class="custom-toast">
+            <i id="toast-icon" class="fas"></i>
+            <span id="toast-message"></span>
+        </div>
+
+        <!-- Header -->
+        <header class="header d-flex flex-row">
+            <div class="header_content d-flex flex-row align-items-center">
+                <div class="logo_container">
+                    <div class="logo">
+                        <img src="images/logo.png" alt="">
+                        <span>course</span>
+                    </div>
+                </div>
+                <nav class="main_nav_container">
+                    <div class="main_nav">
+                        <ul class="main_nav_list">
+                            <li class="main_nav_item"><a href="index.html">Trang chủ</a></li>
+                            <li class="main_nav_item"><a href="courses.html">Khóa học</a></li>
+                            <li class="main_nav_item"><a href="elements.html">Thành phần</a></li>
+                            <li class="main_nav_item"><a href="news.html">Tin tức</a></li>
+                            <li class="main_nav_item"><a href="contact.html">Liên hệ</a></li>
+                            <li class="main_nav_item cart_nav_item">
+                                <div class="cart_icon_container" onclick="window.location.href='cart.html'">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    <span class="cart_count" id="cart_count">0</span>
+                                </div>
+                            </li>
+                            <li class="main_nav_item login_btn_container">
+                                <button id="login_btn" class="login_btn">Đăng nhập</button>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+            <div class="header_side d-flex flex-row justify-content-center align-items-center">
+                <img src="images/phone-call.svg" alt="">
+                <span>+84 123 456 7891</span>
+            </div>
+            <div class="hamburger_container">
+                <i class="fas fa-bars trans_200" style="color: #1c1d1f;"></i>
+            </div>
+        </header>
+
+        <!-- Cart Content -->
+        <div class="cart_section">
+            <div class="container">
+                <h1 class="cart_title">Giỏ hàng</h1>
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div id="cart_items_container" class="cart_list_container">
+                            <!-- Cart items will be injected here -->
+                        </div>
+                        <div id="empty_cart_container" class="empty_cart_msg" style="display: none;">
+                            <i class="fas fa-shopping-cart"></i>
+                            <h3>Giỏ hàng của bạn đang trống</h3>
+                            <p>Hãy chọn cho mình những khóa học bổ ích nhé!</p>
+                            <a href="courses.html" class="continue_shopping">Tiếp tục mua sắm</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="cart_summary">
+                            <div class="summary_title">Tổng cộng:</div>
+                            <div class="total_price" id="total_price">0đ</div>
+                            <button class="checkout_btn" onclick="checkout()">Thanh toán</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer_bar d-flex flex-column flex-sm-row align-items-center">
+                    <div class="footer_copyright">
+                        <span>Copyright © 2026 All rights reserved</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkoutModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <div class="modal-title">Thông tin thanh toán</div>
+            <form id="checkout-form" class="checkout-form">
+                <input type="text" id="order_name" placeholder="Họ và tên" required>
+                <input type="email" id="order_email" placeholder="Email" required>
+                <input type="tel" id="order_phone" placeholder="Số điện thoại" required>
+                <textarea id="order_address" placeholder="Địa chỉ nhận học liệu (nếu có) hoặc ghi chú"
+                    rows="3"></textarea>
+                <button type="submit" id="confirm_order_btn">Xác nhận đặt hàng</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="auth-modal">
+        <div class="auth-modal-content">
+            <span class="auth-close">&times;</span>
+            <div class="auth-header">
+                <h2>Đăng nhập</h2>
+                <p>Chào mừng bạn quay trở lại!</p>
+            </div>
+            <form id="login-form" class="auth-form">
+                <input type="email" id="login_email" class="input_field" placeholder="Email" required>
+                <input type="password" id="login_password" class="input_field" placeholder="Mật khẩu" required>
+                <button type="submit" class="auth-submit-btn">Đăng nhập</button>
+            </form>
+            <div class="auth-footer">
+                Chưa có tài khoản? <a href="#" id="switch-to-register">Đăng ký ngay</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="auth-modal">
+        <div class="auth-modal-content">
+            <span class="auth-close">&times;</span>
+            <div class="auth-header">
+                <h2>Đăng ký</h2>
+                <p>Tham gia cùng chúng tôi ngay hôm nay!</p>
+            </div>
+            <form id="register-form" class="auth-form">
+                <input type="text" name="name" class="input_field" placeholder="Họ và tên" required>
+                <input type="email" name="email" class="input_field" placeholder="Email" required>
+                <input type="password" name="password" class="input_field" placeholder="Mật khẩu" required>
+                <button type="submit" class="auth-submit-btn">Đăng ký</button>
+            </form>
+            <div class="auth-footer">
+                Đã có tài khoản? <a href="#" id="switch-to-login">Đăng nhập</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/google_sheets.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        function renderCart() {
+            const cartKey = typeof getCartKey === 'function' ? getCartKey() : 'cart';
+            const cart = JSON.parse(localStorage.getItem(cartKey)) || [];
+            const container = document.getElementById('cart_items_container');
+            const emptyContainer = document.getElementById('empty_cart_container');
+            const totalPriceElement = document.getElementById('total_price');
+
+            if (cart.length === 0) {
+                container.style.display = 'none';
+                emptyContainer.style.display = 'block';
+                totalPriceElement.innerText = '0đ';
+                return;
+            }
+
+            container.style.display = 'block';
+            emptyContainer.style.display = 'none';
+            container.innerHTML = '';
+
+            let total = 0;
+            cart.forEach((item, index) => {
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart_item';
+                const priceNum = parseInt(item.price.replace(/\D/g, '')) || 0;
+                total += priceNum;
+
+                cartItem.innerHTML = `
+                    <img src="${item.img || 'images/course_1.jpg'}" class="cart_item_img" alt="${item.title}">
+                    <div class="cart_item_info">
+                        <div class="cart_item_title">${item.title}</div>
+                        <div class="cart_item_author">Bởi Mr. Brian</div>
+                        <div class="cart_item_remove" onclick="removeItem(${index})">Xóa</div>
+                    </div>
+                    <div class="cart_item_price">${item.price}</div>
+                `;
+                container.appendChild(cartItem);
+            });
+
+            totalPriceElement.innerText = total.toLocaleString('vi-VN') + 'đ';
+        }
+
+        function removeItem(index) {
+            const cartKey = typeof getCartKey === 'function' ? getCartKey() : 'cart';
+            let cart = JSON.parse(localStorage.getItem(cartKey)) || [];
+            cart.splice(index, 1);
+            localStorage.setItem(cartKey, JSON.stringify(cart));
+            renderCart();
+            if (typeof updateCartCount === 'function') updateCartCount();
+        }
+
+        function checkout() {
+            // Check if user is logged in
+            const userEmail = localStorage.getItem('userEmail');
+            if (!userEmail) {
+                // Show login modal if not logged in
+                const loginModal = document.getElementById('loginModal');
+                if (loginModal) {
+                    loginModal.style.display = 'block';
+                }
+                if (typeof showToast === 'function') {
+                    showToast('Vui lòng đăng nhập để thanh toán!', 'error');
+                } else {
+                    alert('Vui lòng đăng nhập để thanh toán!');
+                }
+                return;
+            }
+
+            const cartKey = typeof getCartKey === 'function' ? getCartKey() : 'cart';
+            const cart = JSON.parse(localStorage.getItem(cartKey)) || [];
+            if (cart.length === 0) {
+                showToast('Giỏ hàng của bạn đang trống!', 'error');
+                return;
+            }
+            document.getElementById('checkoutModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('checkoutModal').style.display = 'none';
+        }
+
+        window.onclick = function (event) {
+            const modal = document.getElementById('checkoutModal');
+            if (event.target == modal) closeModal();
+        }
+
+        document.getElementById('checkout-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const confirmBtn = document.getElementById('confirm_order_btn');
+
+            const cartKey = typeof getCartKey === 'function' ? getCartKey() : 'cart';
+            const cart = JSON.parse(localStorage.getItem(cartKey)) || [];
+            const courses = cart.map(item => item.title).join(', ');
+            const total = document.getElementById('total_price').innerText;
+
+            const formData = new FormData();
+            formData.append('type', 'order');
+            formData.append('name', document.getElementById('order_name').value);
+            formData.append('email', document.getElementById('order_email').value);
+            formData.append('phone', document.getElementById('order_phone').value);
+            formData.append('address', document.getElementById('order_address').value);
+            formData.append('courses', courses);
+            formData.append('total', total);
+
+            submitToGoogleSheets(
+                formData,
+                confirmBtn,
+                'Đặt hàng thành công! Chúng tôi sẽ liên hệ với bạn sớm nhất.',
+                () => {
+                    if (typeof recordActivity === 'function') {
+                        recordActivity('Purchase', `Courses: ${courses} | Total: ${total}`);
+                    }
+                    const cartKey = typeof getCartKey === 'function' ? getCartKey() : 'cart';
+                    localStorage.removeItem(cartKey);
+                    renderCart();
+                    closeModal();
+                    if (typeof updateCartCount === 'function') updateCartCount();
+                }
+            );
+        });
+
+        $(document).ready(function () {
+            renderCart();
+        });
+    </script>
+    <script src="js/support_widget.js"></script>
+    <!--Start of Tawk.to Script-->
+    <script type="text/javascript">
+        var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+        (function () {
+            var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
+            s1.async = true;
+            s1.src = 'https://embed.tawk.to/676cb763af5bfec1dbe201b1/1ig0aoo0n';
+            s1.charset = 'UTF-8';
+            s1.setAttribute('crossorigin', '*');
+            s0.parentNode.insertBefore(s1, s0);
+        })();
+    </script>
+    <!--End of Tawk.to Script-->
+
+</body>
+
+</html>

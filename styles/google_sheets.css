@@ -1,0 +1,331 @@
+/* Custom Toast Styles */
+.toast-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    z-index: 10001;
+    display: none;
+    backdrop-filter: blur(2px);
+}
+
+.toast-overlay.active {
+    display: block;
+}
+
+.custom-toast {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    background: #ffffff;
+    padding: 20px 40px;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    z-index: 10002;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    visibility: hidden;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.custom-toast.active {
+    visibility: visible;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.custom-toast i {
+    font-size: 24px;
+}
+
+.custom-toast span {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1c1d1f;
+}
+
+/* Auth Modal Styles */
+.auth-modal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+}
+
+.auth-modal-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 30px;
+    border-radius: 12px;
+    width: 400px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+.auth-close {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #aaa;
+    cursor: pointer;
+}
+
+.auth-close:hover {
+    color: #1c1d1f;
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.auth-header h2 {
+    font-size: 24px;
+    color: #1c1d1f;
+    margin-bottom: 10px;
+}
+
+.auth-form .input_field {
+    width: 100%;
+    height: 45px;
+    margin-bottom: 15px;
+    padding: 10px 15px;
+    border: 1px solid #d1d7dc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.auth-submit-btn {
+    width: 100%;
+    height: 45px;
+    background: #a435f0;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.auth-submit-btn:hover {
+    background: #8710d8;
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+.auth-footer a {
+    color: #a435f0;
+    font-weight: 700;
+}
+
+/* Header Login Button */
+.login_btn_container {
+    margin-left: 20px;
+}
+
+.login_btn {
+    background: transparent;
+    border: 1px solid #1c1d1f;
+    padding: 8px 16px;
+    font-weight: 700;
+    font-size: 14px;
+    color: #1c1d1f;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.login_btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+/* Consolidated Navigation and User Styling */
+.main_nav_list {
+    display: flex !important;
+    align-items: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
+}
+
+.main_nav_item {
+    display: flex;
+    align-items: center !important;
+    margin-right: 25px !important;
+    white-space: nowrap !important;
+}
+
+.main_nav_item:last-child {
+    margin-right: 0 !important;
+}
+
+.cart_nav_item {
+    margin-left: 10px;
+    margin-right: 20px !important;
+}
+
+#user_display_name {
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    padding: 6px 12px !important;
+    white-space: nowrap;
+    border: 1px solid #d1d7dc;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f7f9fa;
+    color: #1c1d1f;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin: -8px -16px;
+    /* Offset button padding */
+}
+
+.login_btn:has(#user_display_name) {
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+}
+
+#user_display_name:hover {
+    background: #eff2f3;
+    border-color: #1c1d1f;
+}
+
+/* Category Dropdown Menu Styles */
+.header_content>.category_menu_container {
+    display: none !important;
+    /* Hide duplicate if any */
+}
+
+.category_menu_container {
+    position: relative;
+    margin-right: 20px;
+}
+
+.category_menu_btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #1c1d1f;
+    border: none;
+    padding: 0;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 0;
+    transition: all 0.3s ease;
+}
+
+.category_menu_btn:hover {
+    background: transparent;
+    color: #a435f0;
+}
+
+.category_menu_btn i:first-child {
+    font-size: 16px;
+}
+
+.category_menu_btn i:last-child {
+    font-size: 12px;
+    transition: transform 0.3s ease;
+}
+
+.category_menu_container:hover .category_menu_btn i:last-child {
+    transform: rotate(180deg);
+}
+
+.category_dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    background: #ffffff;
+    min-width: 850px;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.category_menu_container:hover .category_dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.category_dropdown_content {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.category_column {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.category_section_title {
+    padding: 0 0 16px 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1c1d1f;
+    text-align: center;
+    border-bottom: 2px solid #ffb606;
+    margin-bottom: 12px;
+}
+
+.category_item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    color: #1c1d1f;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    background: #ffffff;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.category_item:hover {
+    background: #fff4d9;
+    color: #1c1d1f;
+    transform: translateX(5px);
+    box-shadow: 0 2px 8px rgba(255, 182, 6, 0.2);
+}
+
+.category_item i {
+    font-size: 18px;
+    min-width: 20px;
+    color: #ffb606;
+}
+
+.category_divider {
+    height: 1px;
+    background: #e8e8e8;
+    margin: 8px 0;
+}

@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Course - Chi tiết khóa học</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Course Project">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <link rel="stylesheet" type="text/css" href="styles/bootstrap4/bootstrap.min.css">
+    <link href="plugins/fontawesome-free-5.0.1/css/fontawesome-all.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="styles/courses_styles.css">
+    <link rel="stylesheet" type="text/css" href="styles/courses_responsive.css">
+    <link rel="stylesheet" type="text/css" href="styles/google_sheets.css">
+    <style>
+        /* Fixed Header - White Theme */
+        .header {
+            top: 0 !important;
+            width: 100% !important;
+            left: 0 !important;
+            transform: none !important;
+            background: #ffffff !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+            border-bottom: 1px solid #d1d7dc;
+        }
+
+        .header_content {
+            width: calc(100% - 279px) !important;
+        }
+
+        .main_nav_item a {
+            color: #1c1d1f !important;
+            font-weight: 600;
+        }
+
+        .logo span {
+            color: #1c1d1f !important;
+        }
+
+        /* Header Side - Yellow Theme */
+        .header_side {
+            background: #ffb606 !important;
+        }
+
+        .header_side span {
+            color: #ffffff !important;
+        }
+
+        .header_side img {
+            filter: none;
+        }
+
+        .cart_nav_item {
+            margin-left: 20px;
+        }
+
+        .cart_nav_item i {
+            color: #1c1d1f !important;
+            font-size: 20px;
+        }
+
+        .cart_count {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 20px;
+            height: 20px;
+            background: #a435f0 !important;
+            color: #ffffff !important;
+            border-radius: 50%;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        /* Detail Page Styles */
+        .course_detail_section {
+            padding: 140px 0 100px 0;
+            background: #f7f9fa;
+        }
+
+        .course_header {
+            margin-bottom: 40px;
+        }
+
+        .course_title {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1c1d1f;
+            margin-bottom: 15px;
+        }
+
+        .course_meta {
+            display: flex;
+            gap: 20px;
+            color: #6a6f73;
+            font-size: 14px;
+        }
+
+        .course_main_content {
+            background: #ffffff;
+            padding: 30px;
+            border: 1px solid #d1d7dc;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .section_title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #1c1d1f;
+        }
+
+        .course_video_container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+            margin-bottom: 30px;
+            cursor: pointer;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .course_video_container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.7;
+        }
+
+        .play_icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 64px;
+            color: #ffffff;
+            z-index: 2;
+        }
+
+        .sidebar_card {
+            background: #ffffff;
+            border: 1px solid #d1d7dc;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .sidebar_card.sticky {
+            position: sticky;
+            top: 100px;
+        }
+
+        .price_tag {
+            font-size: 32px;
+            font-weight: 800;
+            color: #1c1d1f;
+            margin-bottom: 20px;
+        }
+
+        .add_to_cart_btn {
+            width: 100%;
+            height: 48px;
+            background: #a435f0;
+            color: #ffffff;
+            border: none;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+
+        .buy_now_btn {
+            width: 100%;
+            height: 48px;
+            background: #ffffff;
+            color: #1c1d1f;
+            border: 1px solid #1c1d1f;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        /* Accordion */
+        .accordion_item {
+            border: 1px solid #d1d7dc;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+
+        .accordion_header {
+            padding: 15px 20px;
+            background: #f7f9fa;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+        }
+
+        .accordion_content {
+            padding: 0;
+            display: none;
+        }
+
+        .lesson_item {
+            padding: 12px 20px;
+            border-top: 1px solid #d1d7dc;
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+
+        /* Video Modal */
+        .video_modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 10005;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .video_modal_content {
+            width: 90%;
+            max-width: 1000px;
+            aspect-ratio: 16/9;
+            position: relative;
+        }
+
+        .close_video {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: #fff;
+            font-size: 30px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 991px) {
+            .header_content {
+                width: 100% !important;
+            }
+
+            .header_side {
+                display: none !important;
+            }
+
+            .sidebar_card {
+                margin-top: 30px;
+            }
+        }
+    </style>
+	<link rel="stylesheet" type="text/css" href="styles/support_widget.css">
+	<link rel="stylesheet" type="text/css" href="styles/zalo_qr_modal.css">
+</head>
+
+<body>
+
+    <div class="super_container">
+
+        <!-- Header -->
+        <header class="header d-flex flex-row">
+            <div class="header_content d-flex flex-row align-items-center">
+                <div class="logo_container">
+                    <div class="logo">
+                        <img src="images/logo.png" alt="">
+                        <span>course</span>
+                    </div>
+                </div>
+                <nav class="main_nav_container">
+                    <div class="main_nav">
+                        <ul class="main_nav_list">
+                            <li class="main_nav_item"><a href="index.html">Trang chủ</a></li>
+                            <li class="main_nav_item"><a href="courses.html">Khóa học</a></li>
+                            <li class="main_nav_item"><a href="elements.html">Thành phần</a></li>
+                            <li class="main_nav_item"><a href="news.html">Tin tức</a></li>
+                            <li class="main_nav_item"><a href="contact.html">Liên hệ</a></li>
+                            <li class="main_nav_item cart_nav_item">
+                                <div class="cart_icon_container" onclick="window.location.href='cart.html'">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    <span class="cart_count" id="cart_count">0</span>
+                                </div>
+                            </li>
+                            <li class="main_nav_item login_btn_container">
+                                <button id="login_btn" class="login_btn">Đăng nhập</button>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+            <div class="header_side d-flex flex-row justify-content-center align-items-center">
+                <img src="images/phone-call.svg" alt="">
+                <span>+84 123 456 7891</span>
+            </div>
+            <div class="hamburger_container">
+                <i class="fas fa-bars trans_200" style="color: #1c1d1f;"></i>
+            </div>
+        </header>
+
+        <div class="course_detail_section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="course_header">
+                            <div class="breadcrumbs" style="margin-bottom: 10px; color: #a435f0; font-weight: 700;">
+                                <span id="breadcrumb_cat">IELTS</span> > <span id="breadcrumb_course">...</span>
+                            </div>
+                            <h1 class="course_title" id="course_title">Đang tải...</h1>
+                            <div class="course_meta">
+                                <span><i class="fas fa-user"></i> <span id="course_author">Mr. Brian</span></span>
+                                <span><i class="fas fa-star" style="color: #eb8a19;"></i> 4.8 (2,500 đánh giá)</span>
+                                <span><i class="fas fa-globe"></i> Tiếng Việt</span>
+                            </div>
+                        </div>
+
+                        <div class="course_video_container" onclick="openVideo()">
+                            <img id="course_img" src="images/course_1.jpg" alt="">
+                            <div class="play_icon"><i class="fas fa-play-circle"></i></div>
+                        </div>
+
+                        <div class="course_main_content">
+                            <div class="section_title">Mô tả khóa học</div>
+                            <p id="course_description">...</p>
+                        </div>
+
+                        <div class="course_main_content">
+                            <div class="section_title">Nội dung khóa học</div>
+                            <div id="course_accordion_container">
+                                <!-- Accordion items will be injected here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="sidebar_card" id="sidebar_card">
+                            <div class="price_tag" id="course_price">299.000đ</div>
+                            <button class="add_to_cart_btn" onclick="handleAddToCart()">Thêm vào giỏ hàng</button>
+                            <button class="buy_now_btn">Mua ngay</button>
+                            <div style="margin-top: 20px; font-size: 14px; color: #6a6f73;">
+                                <div style="margin-bottom: 10px;"><i class="fas fa-infinity"></i> Quyền truy cập trọn
+                                    đời</div>
+                                <div style="margin-bottom: 10px;"><i class="fas fa-mobile-alt"></i> Học trên thiết bị di
+                                    động</div>
+                                <div><i class="fas fa-certificate"></i> Giấy chứng nhận hoàn thành</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer_bar d-flex flex-column flex-sm-row align-items-center">
+                    <div class="footer_copyright">
+                        <span>Copyright © 2026 All rights reserved</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Video Modal -->
+    <div id="video_modal" class="video_modal">
+        <div class="video_modal_content">
+            <span class="close_video" onclick="closeVideo()">&times;</span>
+            <div id="modal_video_container" style="width: 100%; height: 100%;"></div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="auth-modal">
+        <div class="auth-modal-content">
+            <span class="auth-close">&times;</span>
+            <div class="auth-header">
+                <h2>Đăng nhập</h2>
+                <p>Chào mừng bạn quay trở lại!</p>
+            </div>
+            <form id="login-form" class="auth-form">
+                <input type="email" id="login_email" class="input_field" placeholder="Email" required>
+                <input type="password" id="login_password" class="input_field" placeholder="Mật khẩu" required>
+                <button type="submit" class="auth-submit-btn">Đăng nhập</button>
+            </form>
+            <div class="auth-footer">
+                Chưa có tài khoản? <a href="#" id="switch-to-register">Đăng ký ngay</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="auth-modal">
+        <div class="auth-modal-content">
+            <span class="auth-close">&times;</span>
+            <div class="auth-header">
+                <h2>Đăng ký</h2>
+                <p>Tham gia cùng chúng tôi ngay hôm nay!</p>
+            </div>
+            <form id="register-form" class="auth-form">
+                <input type="text" name="name" class="input_field" placeholder="Họ và tên" required>
+                <input type="email" name="email" class="input_field" placeholder="Email" required>
+                <input type="password" name="password" class="input_field" placeholder="Mật khẩu" required>
+                <button type="submit" class="auth-submit-btn">Đăng ký</button>
+            </form>
+            <div class="auth-footer">
+                Đã có tài khoản? <a href="#" id="switch-to-login">Đăng nhập</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/google_sheets.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        const courses = {
+            "1": {
+                title: "IELTS cho người mới bắt đầu",
+                price: "299.000đ",
+                author: "Mr. Brian",
+                img: "images/course_1.jpg",
+                category: "IELTS",
+                desc: "Lộ trình rõ ràng cho người mất gốc. Khóa học tập trung vào 4 kỹ năng Nghe, Nói, Đọc, Viết với các phương pháp làm bài hiệu quả.",
+                video: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+                chapters: [
+                    { title: "Chương 1: Giới thiệu về IELTS", lessons: ["Cấu trúc bài thi IELTS", "Tiêu chí chấm điểm", "Lập kế hoạch học tập"] },
+                    { title: "Chương 2: Kỹ năng Nghe (Listening)", lessons: ["Các dạng bài phổ biến", "Mẹo nghe từ khóa", "Thực hành Section 1"] },
+                    { title: "Chương 3: Kỹ năng Đọc (Reading)", lessons: ["Kỹ thuật Skimming & Scanning", "Xử lý bài đọc dài", "Từ vựng học thuật"] }
+                ]
+            },
+            "2": {
+                title: "IELTS 6.0–6.5 cho sinh viên",
+                price: "299.000đ",
+                author: "Mr. Brian",
+                img: "images/course_2.jpg",
+                category: "IELTS",
+                desc: "Học là lên điểm. Khóa học dành riêng cho sinh viên muốn đạt chứng chỉ IELTS để ra trường hoặc đi du học.",
+                video: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+                chapters: [
+                    { title: "Chương 1: Tổng quan", lessons: ["Mục tiêu 6.5", "Tài liệu cần thiết"] },
+                    { title: "Chương 2: Kỹ năng Nói", lessons: ["Part 1: Giới thiệu bản thân", "Part 2: Mô tả chủ đề", "Part 3: Thảo luận chuyên sâu"] }
+                ]
+            },
+            "3": {
+                title: "Từ 4.0 lên 6.5 IELTS",
+                price: "299.000đ",
+                author: "Mr. Brian",
+                img: "images/course_3.jpg",
+                category: "IELTS",
+                desc: "Công thức học ngắn – hiệu quả thật. Giúp bạn bứt phá điểm số trong thời gian ngắn nhất.",
+                video: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+                chapters: [
+                    { title: "Chương 1: Xây dựng nền tảng", lessons: ["Ngữ pháp trọng tâm", "Phát âm chuẩn IPA"] },
+                    { title: "Chương 2: Kỹ năng Viết (Writing)", lessons: ["Task 1: Mô tả biểu đồ", "Task 2: Nghị luận xã hội"] }
+                ]
+            },
+            "4": {
+                title: "Lập trình Python cơ bản",
+                price: "299.000đ",
+                author: "Mr. Brian",
+                img: "images/course_4.jpg",
+                category: "Lập trình",
+                desc: "Học lập trình Python từ con số 0. Phù hợp cho người mới bắt đầu muốn tìm hiểu về lập trình.",
+                video: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+                chapters: [
+                    { title: "Chương 1: Cài đặt môi trường", lessons: ["Cài đặt Python & VS Code", "Chạy chương trình Hello World"] },
+                    { title: "Chương 2: Biến và Kiểu dữ liệu", lessons: ["Số, Chuỗi, Boolean", "List, Tuple, Dictionary"] }
+                ]
+            },
+            "5": {
+                title: "Lập trình HTML cơ bản",
+                price: "299.000đ",
+                author: "Mr. Brian",
+                img: "images/course_5.jpg",
+                category: "Lập trình",
+                desc: "Xây dựng nền tảng web vững chắc với HTML và CSS.",
+                video: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+                chapters: [
+                    { title: "Chương 1: Cấu trúc HTML", lessons: ["Các thẻ cơ bản", "Form và Input", "Semantic HTML"] },
+                    { title: "Chương 2: CSS cơ bản", lessons: ["Selector và Property", "Box Model", "Flexbox"] }
+                ]
+            },
+            "6": {
+                title: "Photoshop cơ bản",
+                price: "299.000đ",
+                author: "Mr. Brian",
+                img: "images/course_6.jpg",
+                category: "Thiết kế",
+                desc: "Làm chủ công cụ thiết kế đồ họa phổ biến nhất thế giới.",
+                video: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+                chapters: [
+                    { title: "Chương 1: Làm quen giao diện", lessons: ["Công cụ Selection", "Làm việc với Layer"] },
+                    { title: "Chương 2: Chỉnh sửa ảnh", lessons: ["Cắt ghép cơ bản", "Chỉnh màu sắc", "Xóa vật thể thừa"] }
+                ]
+            }
+        };
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const courseId = urlParams.get('id');
+        let currentVideoUrl = "";
+
+        if (courseId && courses[courseId]) {
+            const course = courses[courseId];
+            document.getElementById('course_title').innerText = course.title;
+            document.getElementById('breadcrumb_course').innerText = course.title;
+            document.getElementById('breadcrumb_cat').innerText = course.category;
+            document.getElementById('course_description').innerText = course.desc;
+            document.getElementById('course_price').innerText = course.price;
+            document.getElementById('course_author').innerText = course.author;
+            document.getElementById('course_img').src = course.img;
+            currentVideoUrl = course.video;
+
+            const accordionContainer = document.getElementById('course_accordion_container');
+            course.chapters.forEach((chapter, index) => {
+                const item = document.createElement('div');
+                item.className = 'accordion_item';
+                item.innerHTML = `
+					<div class="accordion_header" onclick="toggleAccordion(this)">
+						<span>${chapter.title}</span>
+						<i class="fas fa-chevron-down"></i>
+					</div>
+					<div class="accordion_content">
+						${chapter.lessons.map(lesson => `
+							<div class="lesson_item">
+								<span><i class="far fa-play-circle"></i> ${lesson}</span>
+								<span style="color: #6a6f73;">05:00</span>
+							</div>
+						`).join('')}
+					</div>
+				`;
+                accordionContainer.appendChild(item);
+            });
+        }
+
+        function toggleAccordion(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('i');
+            if (content.style.display === 'block') {
+                content.style.display = 'none';
+                icon.className = 'fas fa-chevron-down';
+            } else {
+                content.style.display = 'block';
+                icon.className = 'fas fa-chevron-up';
+            }
+        }
+
+        function openVideo() {
+            document.getElementById('video_modal').style.display = 'flex';
+            document.getElementById('modal_video_container').innerHTML = `<iframe width="100%" height="100%" src="${currentVideoUrl}?autoplay=1" frameborder="0" allowfullscreen></iframe>`;
+        }
+
+        function closeVideo() {
+            document.getElementById('video_modal').style.display = 'none';
+            document.getElementById('modal_video_container').innerHTML = '';
+        }
+
+        function handleAddToCart() {
+            if (courseId && courses[courseId]) {
+                const course = courses[courseId];
+                addToCartById(courseId, course.title, course.price, course.img);
+            }
+        }
+
+        $(window).scroll(function () {
+            const sidebar = $('#sidebar_card');
+            const scroll = $(window).scrollTop();
+            if (scroll > 100 && window.innerWidth > 991) {
+                sidebar.addClass('sticky');
+            } else {
+                sidebar.removeClass('sticky');
+            }
+        });
+    </script>
+	<script src="js/support_widget.js"></script>
+	<!--Start of Tawk.to Script-->
+	<script type="text/javascript">
+	var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+	(function(){
+	var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+	s1.async=true;
+	s1.src='https://embed.tawk.to/676cb763af5bfec1dbe201b1/1ig0aoo0n';
+	s1.charset='UTF-8';
+	s1.setAttribute('crossorigin','*');
+	s0.parentNode.insertBefore(s1,s0);
+	})();
+	</script>
+	<!--End of Tawk.to Script-->
+
+</body>
+
+</html>

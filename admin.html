@@ -1,0 +1,1686 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Course</title>
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <link rel="stylesheet" type="text/css" href="styles/bootstrap4/bootstrap.min.css">
+    <link href="plugins/fontawesome-free-5.0.1/css/fontawesome-all.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --primary-light: #a29bfe;
+            --secondary: #fdcb6e;
+            --success: #00b894;
+            --info: #0984e3;
+            --danger: #d63031;
+            --dark: #2d3436;
+            --bg-light: #f1f2f6;
+            --white: #ffffff;
+            --glass: rgba(255, 255, 255, 0.8);
+            --sidebar-width: 280px;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --border-radius: 16px;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--dark);
+            margin: 0;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Modern Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: linear-gradient(180deg, #2d3436 0%, #000000 100%);
+            color: var(--white);
+            position: fixed;
+            padding: 30px 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            box-shadow: 10px 0 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-header {
+            padding: 0 30px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .sidebar-header img {
+            width: 45px;
+            filter: drop-shadow(0 0 10px rgba(108, 92, 231, 0.5));
+        }
+
+        .sidebar-header span {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, #fff, var(--primary-light));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0 15px;
+        }
+
+        .menu-item {
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .menu-item i {
+            font-size: 18px;
+            width: 25px;
+            text-align: center;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--white);
+            transform: translateX(5px);
+        }
+
+        .menu-item.active {
+            background: var(--primary);
+            color: var(--white);
+            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.3);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex-grow: 1;
+            padding: 40px;
+            min-height: 100vh;
+            transition: all 0.4s;
+        }
+
+        .admin-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .admin-section.active {
+            display: block;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .welcome-text h1 {
+            font-size: 32px;
+            font-weight: 800;
+            margin: 0;
+            color: var(--dark);
+            letter-spacing: -0.5px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: var(--white);
+            padding: 8px 8px 8px 20px;
+            border-radius: 50px;
+            box-shadow: var(--shadow);
+        }
+
+        .logout-btn {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #5b4bc4;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4);
+        }
+
+        /* Premium Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 1);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, rgba(108, 92, 231, 0.05), transparent);
+            border-radius: 0 0 0 100%;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .icon-revenue {
+            background: rgba(0, 184, 148, 0.1);
+            color: var(--success);
+        }
+
+        .icon-orders {
+            background: rgba(108, 92, 231, 0.1);
+            color: var(--primary);
+        }
+
+        .icon-users {
+            background: rgba(9, 132, 227, 0.1);
+            color: var(--info);
+        }
+
+        .icon-traffic {
+            background: rgba(253, 203, 110, 0.1);
+            color: var(--secondary);
+        }
+
+        .stat-card h3 {
+            font-size: 15px;
+            color: #636e72;
+            font-weight: 600;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--dark);
+            margin: 0;
+        }
+
+        /* Card & Tables */
+        .card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: none;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        .card-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--dark);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+        }
+
+        th {
+            text-align: left;
+            padding: 15px 20px;
+            color: #636e72;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+
+        td {
+            padding: 18px 20px;
+            background: var(--white);
+            font-size: 15px;
+            color: var(--dark);
+            border-top: 1px solid #f1f2f6;
+            border-bottom: 1px solid #f1f2f6;
+        }
+
+        tr td:first-child {
+            border-left: 1px solid #f1f2f6;
+            border-radius: 12px 0 0 12px;
+        }
+
+        tr td:last-child {
+            border-right: 1px solid #f1f2f6;
+            border-radius: 0 12px 12px 0;
+        }
+
+        tr:hover td {
+            background: #fafafa;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            white-space: nowrap;
+            display: inline-block;
+            line-height: 1;
+        }
+
+        .status-success {
+            background: #e3fcef;
+            color: #00b894;
+        }
+
+        .status-info {
+            background: #e3f2fd;
+            color: #0984e3;
+        }
+
+        /* Compact Premium Modal */
+        .modal {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            transition: all 0.4s ease;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            display: none;
+            /* Hide by default */
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            padding: 25px 35px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            max-width: 650px;
+            width: 95%;
+            position: relative;
+        }
+
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            color: #b2bec3;
+            cursor: pointer;
+            transition: 0.3s;
+            z-index: 10;
+        }
+
+        .close-modal:hover {
+            color: var(--danger);
+            transform: rotate(90deg);
+        }
+
+        .modal h2 {
+            font-weight: 800;
+            font-size: 22px;
+            margin-bottom: 5px;
+            color: var(--dark);
+            letter-spacing: -0.5px;
+        }
+
+        .modern-input-group {
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .modern-input-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 13px;
+            color: #636e72;
+            margin-bottom: 4px;
+            transition: 0.3s;
+        }
+
+        .modern-input {
+            width: 100%;
+            padding: 10px 16px;
+            border: 2px solid #f1f2f6;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+            background: #fdfdfd;
+        }
+
+        .modern-input:focus {
+            border-color: var(--primary);
+            background: #fff;
+            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.1);
+            outline: none;
+        }
+
+        .icon-preview-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #f8f9fa;
+            padding: 10px 15px;
+            border-radius: 12px;
+            margin-top: 5px;
+        }
+
+        #current-icon-preview {
+            width: 45px;
+            height: 45px;
+            background: var(--white);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--primary);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .category-preview-text {
+            font-size: 13px;
+            color: #636e72;
+        }
+
+        .btn-gradient {
+            background: linear-gradient(135deg, var(--primary) 0%, #8e44ad 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-weight: 700;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.2);
+            margin-top: 10px;
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(108, 92, 231, 0.3);
+        }
+
+        .btn-add-new {
+            background: var(--dark);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
+            border: none;
+        }
+
+        .btn-add-new:hover {
+            background: var(--primary);
+            transform: scale(1.05);
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Category Table Styles */
+        .cat-icon-circle {
+            width: 40px;
+            height: 40px;
+            background: rgba(108, 92, 231, 0.1);
+            color: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .btn-action {
+            width: 35px;
+            height: 35px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-edit {
+            background: rgba(9, 132, 227, 0.1);
+            color: var(--info);
+        }
+
+        .btn-delete {
+            background: rgba(214, 48, 49, 0.1);
+            color: var(--danger);
+        }
+
+        .btn-edit:hover {
+            background: var(--info);
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-action i {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            pointer-events: none;
+        }
+
+        /* Security Check Overlay */
+        #security-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--white);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Security Check Script -->
+    <div id="security-overlay">
+        <i class="fas fa-shield-alt fa-3x" style="color: var(--primary-color); margin-bottom: 20px;"></i>
+        <h2>Đang kiểm tra quyền truy cập...</h2>
+    </div>
+
+    <script>
+        (function () {
+            const role = localStorage.getItem('userRole');
+            if (role !== 'admin') {
+                alert('Bạn không có quyền truy cập trang này!');
+                window.location.href = 'index.html';
+            } else {
+                document.getElementById('security-overlay').style.display = 'none';
+            }
+        })();
+    </script>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="images/logo.png" alt="Logo">
+            <span>DASHBOARD</span>
+        </div>
+        <ul class="sidebar-menu">
+            <li>
+                <div onclick="showSection('dashboard')" class="menu-item active" id="menu-dashboard"><i
+                        class="fas fa-home"></i> Dashboard</div>
+            </li>
+            <li>
+                <div onclick="showSection('courses')" class="menu-item" id="menu-courses"><i class="fas fa-book"></i>
+                    Quản lý khóa học</div>
+            </li>
+            <li>
+                <div onclick="showSection('categories')" class="menu-item" id="menu-categories"><i
+                        class="fas fa-list"></i> Quản lý Danh mục</div>
+            </li>
+            <li>
+                <div onclick="showSection('users')" class="menu-item" id="menu-users"><i class="fas fa-users"></i> Người
+                    dùng</div>
+            </li>
+            <li>
+                <div onclick="showSection('orders')" class="menu-item" id="menu-orders"><i
+                        class="fas fa-shopping-cart"></i> Đơn hàng</div>
+            </li>
+            <li>
+                <div onclick="showSection('logs')" class="menu-item" id="menu-logs"><i class="fas fa-history"></i> Logs
+                    hoạt động</div>
+            </li>
+
+            <li><a href="index.html" class="menu-item"><i class="fas fa-external-link-alt"></i> Xem Website</a></li>
+            <li style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <div class="menu-item" style="cursor: default; color: var(--white); opacity: 1;">
+                    <div
+                        style="width: 30px; height: 30px; background: var(--primary-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 14px; margin-right: 1px;">
+                        A</div>
+                    <span id="admin_email"
+                        style="font-size: 13px; opacity: 0.8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">admin@example.com</span>
+                </div>
+            </li>
+            <li>
+                <div onclick="logoutAdmin()" class="menu-item" style="color: var(--secondary);"><i
+                        class="fas fa-sign-out-alt"></i> Đăng xuất</div>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <div class="welcome-text">
+                <h1 id="admin_name">Chào mừng, Admin!</h1>
+                <p style="color: #6a6f73; margin: 0;">Hệ thống quản trị trực tiếp trên Web.</p>
+            </div>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboard-section" class="admin-section active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon icon-revenue"><i class="fas fa-dollar-sign"></i></div>
+                    <h3>Tổng doanh thu</h3>
+                    <div class="value" id="stat-revenue">0đ</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon icon-orders"><i class="fas fa-shopping-bag"></i></div>
+                    <h3>Khóa học đã bán</h3>
+                    <div class="value" id="stat-orders">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon icon-users"><i class="fas fa-user-graduate"></i></div>
+                    <h3>Học viên</h3>
+                    <div class="value" id="stat-users">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon icon-traffic"><i class="fas fa-eye"></i></div>
+                    <h3>Truy cập hôm nay</h3>
+                    <div class="value" id="stat-traffic">0</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Hoạt động gần đây</h2>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thời gian</th>
+                            <th>Người dùng</th>
+                            <th>Hành động</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recent_activity_body">
+                        <tr>
+                            <td>22:30:15</td>
+                            <td>Gia Bảo</td>
+                            <td>Đăng nhập hệ thống</td>
+                            <td><span class="status-badge status-success">Thành công</span></td>
+                        </tr>
+                        <tr>
+                            <td>22:28:40</td>
+                            <td>Guest</td>
+                            <td>Xem khóa học IELTS 6.5</td>
+                            <td><span class="status-badge status-info">Thông tin</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Course Management Section -->
+        <div id="courses-section" class="admin-section">
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h2 class="card-title">Quản lý Khóa học</h2>
+                        <p style="margin: 0; font-size: 14px; color: #636e72;">Danh sách các khóa học hiện có trên hệ
+                            thống.</p>
+                    </div>
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <input type="text" id="course-search" placeholder="Tìm tên khóa học, tác giả..."
+                            oninput="filterCourses()" class="modern-input" style="width: 300px; padding: 10px 20px;">
+                        <button class="btn-add-new" onclick="showAddCourseModal()">
+                            <i class="fas fa-plus-circle"></i> THÊM KHÓA HỌC MỚI
+                        </button>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 60px;">ID</th>
+                                <th style="width: 80px;">Ảnh</th>
+                                <th>Tên khóa học</th>
+                                <th style="width: 120px;">Giá</th>
+                                <th style="width: 150px;">Tác giả</th>
+                                <th style="width: 120px; text-align: center;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="course_list_body">
+                            <tr>
+                                <td colspan="6" class="text-center">
+                                    <div style="padding: 50px;">
+                                        <i class="fas fa-circle-notch fa-spin fa-2x" style="color: var(--primary);"></i>
+                                        <p style="margin-top: 15px;">Đang tải dữ liệu...</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category Management Section -->
+        <div id="categories-section" class="admin-section">
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h2 class="card-title">Quản lý Danh mục</h2>
+                        <p style="margin: 0; font-size: 14px; color: #636e72;">Quản lý các môn học và bộ sưu tập khóa
+                            học.</p>
+                    </div>
+                    <button class="btn-add-new" onclick="showAddCategoryModal()">
+                        <i class="fas fa-plus-circle"></i> THÊM DANH MỤC MỚI
+                    </button>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 80px;">Icon</th>
+                                <th>Tên danh mục</th>
+                                <th style="width: 150px; text-align: center;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="category_list_body">
+                            <tr>
+                                <td colspan="3" class="text-center">
+                                    <div style="padding: 50px;">
+                                        <i class="fas fa-circle-notch fa-spin fa-2x" style="color: var(--primary);"></i>
+                                        <p style="margin-top: 15px;">Đang tải danh mục...</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Management Section -->
+        <div id="users-section" class="admin-section">
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h2 class="card-title">Quản lý Người dùng</h2>
+                        <p style="margin: 0; font-size: 14px; color: #636e72;">Quản trị tài khoản và phân quyền học
+                            viên.</p>
+                    </div>
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <input type="text" id="user-search" placeholder="Tìm tên hoặc email..." onkeyup="filterUsers()"
+                            class="modern-input" style="width: 300px; padding: 10px 20px;">
+                        <button class="btn-add-new" onclick="showCreateUserModal()">
+                            <i class="fas fa-user-plus"></i> THÊM NGƯỜI DÙNG
+                        </button>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tên người dùng</th>
+                                <th>Email</th>
+                                <th style="width: 120px;">Vai trò</th>
+                                <th style="width: 120px; text-align: center;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="user_list_body">
+                            <tr>
+                                <td colspan="4" class="text-center">
+                                    <div style="padding: 50px;">
+                                        <i class="fas fa-circle-notch fa-spin fa-2x" style="color: var(--primary);"></i>
+                                        <p style="margin-top: 15px;">Đang tải dữ liệu...</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="orders-section" class="admin-section">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Quản lý đơn hàng</h2>
+                    <div class="search-box">
+                        <input type="text" id="order-search" placeholder="Tìm tên, email hoặc khóa học..."
+                            oninput="filterOrders()"
+                            style="padding: 10px 20px; border: 2px solid #f1f2f6; border-radius: 50px; font-size: 14px; width: 350px; outline: none; transition: 0.3s;">
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Thời gian</th>
+                                <th>Tên khách hàng</th>
+                                <th>Email</th>
+                                <th>SĐT</th>
+                                <th>Địa chỉ</th>
+                                <th>Khóa học</th>
+                                <th>Tổng tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody id="order_list_body">
+                            <tr>
+                                <td colspan="7" class="text-center">Đang tải dữ liệu...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="logs-section" class="admin-section">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Nhật ký hoạt động (Logs)</h2>
+                    <div class="search-box d-flex align-items-center" style="gap: 15px;">
+                        <select id="log-filter-type" onchange="filterLogs()"
+                            style="padding: 10px 20px; border: 2px solid #f1f2f6; border-radius: 50px; font-size: 14px; outline: none;">
+                            <option value="all">Tất cả hoạt động</option>
+                            <option value="important">Hoạt động quan trọng</option>
+                            <option value="Login">Đăng nhập</option>
+                            <option value="Admin">Hành động Admin</option>
+                            <option value="Order">Đơn hàng</option>
+                            <option value="Input Change">Nhập liệu</option>
+                        </select>
+                        <input type="text" id="log-search" placeholder="Tìm kiếm log..." oninput="filterLogs()"
+                            style="padding: 10px 20px; border: 2px solid #f1f2f6; border-radius: 50px; font-size: 14px; width: 300px; outline: none;">
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table id="logs-table">
+                        <thead>
+                            <tr>
+                                <th>Thời gian</th>
+                                <th>Người dùng</th>
+                                <th>Hành động</th>
+                                <th>Chi tiết</th>
+                                <th>Vị trí</th>
+                            </tr>
+                        </thead>
+                        <tbody id="log_list_body">
+                            <tr>
+                                <td colspan="5" class="text-center">Đang tải dữ liệu...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Course Modal Redesigned -->
+    <div id="courseModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <span class="close-modal" onclick="closeCourseModal()">&times;</span>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div
+                    style="width: 60px; height: 60px; background: rgba(108, 92, 231, 0.1); color: var(--primary); border-radius: 20px; display: inline-flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 15px;">
+                    <i class="fas fa-book"></i>
+                </div>
+                <h2 id="modal-title" style="margin: 0;">Thông tin Khóa học</h2>
+            </div>
+
+            <form id="course-form">
+                <input type="hidden" id="course_id_hidden">
+
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="modern-input-group">
+                            <label>Tên khóa học</label>
+                            <input type="text" id="course_title" class="modern-input" placeholder="Nhập tên khóa học..."
+                                required>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="modern-input-group">
+                            <label>Giá (VNĐ)</label>
+                            <input type="text" id="course_price" class="modern-input" placeholder="Ví dụ: 500,000"
+                                required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modern-input-group">
+                    <label>Link hình ảnh bìa</label>
+                    <input type="url" id="course_img" class="modern-input" placeholder="https://example.com/image.jpg"
+                        required>
+                </div>
+
+                <div class="modern-input-group">
+                    <label>Tác giả / Giảng viên</label>
+                    <input type="text" id="course_author" class="modern-input" placeholder="Tên người giảng dạy..."
+                        required>
+                </div>
+
+                <div class="modern-input-group">
+                    <label>Mô tả tóm tắt</label>
+                    <textarea id="course_text" class="modern-input" rows="4"
+                        placeholder="Nội dung giới thiệu khóa học..." style="resize: none;" required></textarea>
+                </div>
+
+                <button type="submit" id="save_course_btn" class="btn-gradient">
+                    <i class="fas fa-save" style="margin-right: 8px;"></i> LƯU THÔNG TIN KHÓA HỌC
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- User Modal Redesigned -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeUserModal()">&times;</span>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div
+                    style="width: 60px; height: 60px; background: rgba(9, 132, 227, 0.1); color: var(--info); border-radius: 20px; display: inline-flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 15px;">
+                    <i class="fas fa-user-edit"></i>
+                </div>
+                <h2 id="user-modal-title" style="margin: 0;">Thiết lập Tài khoản</h2>
+            </div>
+
+            <form id="user-form" onsubmit="return handleUserFormSubmit(event);">
+                <input type="hidden" id="edit_user_original_email">
+
+                <div class="modern-input-group">
+                    <label>Họ và tên</label>
+                    <input type="text" id="edit_user_name" class="modern-input" placeholder="Nhập tên người dùng..."
+                        required>
+                </div>
+
+                <div class="modern-input-group">
+                    <label>Địa chỉ Email</label>
+                    <input type="email" id="edit_user_email" class="modern-input" placeholder="example@gmail.com"
+                        required>
+                </div>
+
+                <div class="modern-input-group">
+                    <label>Vai trò hệ thống</label>
+                    <select id="edit_user_role" class="modern-input">
+                        <option value="user">Học viên (User)</option>
+                        <option value="admin">Quản trị viên (Admin)</option>
+                    </select>
+                </div>
+
+                <div class="modern-input-group">
+                    <label>Mật khẩu</label>
+                    <input type="password" id="edit_user_password" class="modern-input"
+                        placeholder="Để trống nếu không đổi">
+                </div>
+
+                <button type="submit" id="save_user_btn" class="btn-gradient"
+                    style="background: linear-gradient(135deg, var(--info) 0%, #00cec9 100%);">
+                    <i class="fas fa-check-circle" style="margin-right: 8px;"></i> XÁC NHẬN THAY ĐỔI
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Category Modal Redesigned -->
+    <div id="categoryModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeCategoryModal()">&times;</span>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div
+                    style="width: 60px; height: 60px; background: rgba(108, 92, 231, 0.1); color: var(--primary); border-radius: 20px; display: inline-flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 15px;">
+                    <i class="fas fa-th-large"></i>
+                </div>
+                <h2 id="category-modal-title" style="margin: 0;">Thiết lập Danh mục</h2>
+                <p style="color: #636e72; font-size: 14px; margin-top: 5px;">Thêm hoặc cập nhật danh mục học tập.</p>
+            </div>
+
+            <form id="category-form">
+                <input type="hidden" id="category_id_hidden">
+
+                <div class="modern-input-group">
+                    <label>Tên danh mục chuyên nghiệp</label>
+                    <input type="text" id="category_name" class="modern-input"
+                        placeholder="Ví dụ: TOÁN CAO CẤP, IELTS INTENSIVE..." oninput="updateCatPreview()" required>
+                </div>
+
+                <div class="modern-input-group">
+                    <label>Biểu tượng đại diện (FontAwesome)</label>
+                    <input type="text" id="category_icon" class="modern-input" placeholder="fa-book, fa-laptop..."
+                        value="fas fa-folder" oninput="updateCatPreview()" required>
+                </div>
+
+                <div class="icon-preview-box">
+                    <div id="current-icon-preview">
+                        <i class="fas fa-folder"></i>
+                    </div>
+                    <div>
+                        <div class="category-preview-label"
+                            style="font-weight: 700; color: var(--dark); margin-bottom: 2px;">Xem trước hiển thị</div>
+                        <div id="category-preview-name" class="category-preview-text">Chưa nhập tên...</div>
+                    </div>
+                </div>
+
+                <button type="submit" id="save_category_btn" class="btn-gradient">
+                    <i class="fas fa-save" style="margin-right: 8px;"></i> XÁC NHẬN LƯU DỮ LIỆU
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/google_sheets.js"></script>
+    <script>
+        document.getElementById('admin_name').innerText = 'Chào mừng, ' + (localStorage.getItem('userName') || 'Admin') + '!';
+        document.getElementById('admin_email').innerText = localStorage.getItem('userEmail');
+
+        var allCourses = [];
+        var allUsers = [];
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionId + '-section').classList.add('active');
+            document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+            document.getElementById('menu-' + sectionId).classList.add('active');
+
+            // Lưu section hiện tại vào localStorage
+            localStorage.setItem('currentAdminSection', sectionId);
+
+            if (sectionId === 'dashboard') {
+                loadOrders();
+                loadUsers();
+                loadLogs();
+            }
+            if (sectionId === 'courses') loadCourses();
+            if (sectionId === 'categories') loadCategories();
+            if (sectionId === 'users') loadUsers();
+            if (sectionId === 'orders') loadOrders();
+            if (sectionId === 'logs') loadLogs();
+        }
+
+        // Khôi phục section khi tải trang
+        window.addEventListener('DOMContentLoaded', function () {
+            const savedSection = localStorage.getItem('currentAdminSection') || 'dashboard';
+            showSection(savedSection);
+        });
+
+        function logoutAdmin() {
+            if (confirm('Bạn có muốn đăng xuất?')) {
+                if (typeof recordActivity === 'function') recordActivity('Logout', `Admin: ${localStorage.getItem('userEmail')}`);
+                localStorage.removeItem('userEmail');
+                localStorage.removeItem('userRole');
+                localStorage.removeItem('userName');
+                localStorage.removeItem('currentAdminSection');
+                window.location.href = 'index.html';
+            }
+        }
+
+        // --- Order Management Logic ---
+        var allOrders = [];
+
+        function loadOrders() {
+            const tbody = document.getElementById('order_list_body');
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center">Đang tải dữ liệu...</td></tr>';
+
+            const fetchUrl = `${scriptURL}?type=get_orders&t=${new Date().getTime()}`;
+            console.log('Fetching orders from:', fetchUrl);
+
+            fetch(fetchUrl)
+                .then(res => {
+                    if (!res.ok) throw new Error('Network response was not ok: ' + res.status);
+                    return res.json();
+                })
+                .then(data => {
+                    console.log('Order data received:', data);
+                    if (data.result === 'success') {
+                        allOrders = data.orders;
+                        renderOrders(allOrders);
+                        updateDashboardStats(); // Cập nhật thống kê
+                    } else {
+                        tbody.innerHTML = '<tr><td colspan="7" class="text-center text-danger">Lỗi từ script: ' + (data.message || 'Không xác định') + '</td></tr>';
+                    }
+                })
+                .catch(err => {
+                    console.error('Fetch error details:', err);
+                    tbody.innerHTML = '<tr><td colspan="7" class="text-center text-danger">Lỗi kết nối: ' + err.message + '</td></tr>';
+                });
+        }
+
+        function renderOrders(orders) {
+            const tbody = document.getElementById('order_list_body');
+            tbody.innerHTML = '';
+            if (orders.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center">Chưa có đơn hàng nào</td></tr>';
+                return;
+            }
+            orders.forEach(o => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${o.timestamp || 'N/A'}</td>
+                    <td style="font-weight: 600;">${o.name || 'N/A'}</td>
+                    <td>${o.email || 'N/A'}</td>
+                    <td>${o.phone || 'N/A'}</td>
+                    <td>${o.address || 'N/A'}</td>
+                    <td style="max-width: 300px; white-space: normal;">${o.courses || 'N/A'}</td>
+                    <td style="color: var(--primary-color); font-weight: 700;">${o.total || 'N/A'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterOrders() {
+            if (!Array.isArray(allOrders)) return;
+            const query = document.getElementById('order-search').value.toLowerCase();
+            const filtered = allOrders.filter(o => {
+                const nameMatch = o.name && String(o.name).toLowerCase().includes(query);
+                const emailMatch = o.email && String(o.email).toLowerCase().includes(query);
+                const coursesMatch = o.courses && String(o.courses).toLowerCase().includes(query);
+                const phoneMatch = o.phone && String(o.phone).toLowerCase().includes(query);
+                return nameMatch || emailMatch || coursesMatch || phoneMatch;
+            });
+            renderOrders(filtered);
+        }
+
+        function loadCourses() {
+            const tbody = document.getElementById('course_list_body');
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center">Đang tải dữ liệu...</td></tr>';
+            fetch(`${scriptURL}?type=get_courses`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.result === 'success') {
+                        allCourses = data.courses;
+                        tbody.innerHTML = '';
+                        allCourses.forEach(c => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `
+                                <td style="font-weight: 700; color: #b2bec3;">${c.id}</td>
+                                <td>
+                                    <div class="cat-icon-circle" style="background: none; overflow: hidden; border: 1px solid #f1f2f6;">
+                                        <img src="${c.img}" style="width: 100%; height: 100%; object-fit: cover;">
+                                    </div>
+                                </td>
+                                <td style="font-weight: 600;">${c.title}</td>
+                                <td style="color: var(--primary); font-weight: 700;">${c.price}</td>
+                                <td><span style="font-size: 13px; color: #636e72;">${c.author}</span></td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="btn-action btn-edit" onclick="showEditCourseModal('${c.id}')" title="Sửa"><i class="fas fa-edit"></i></button>
+                                        <button class="btn-action btn-delete" onclick="deleteCourse('${c.id}')" title="Xóa"><i class="fas fa-trash-alt"></i></button>
+                                    </div>
+                                </td>
+                            `;
+                            tbody.appendChild(tr);
+                        });
+                    } else {
+                        tbody.innerHTML = '<tr><td colspan="6" class="text-center text-danger">Lỗi: ' + data.message + '</td></tr>';
+                    }
+                })
+                .catch(() => tbody.innerHTML = '<tr><td colspan="6" class="text-center text-danger">Lỗi kết nối máy chủ</td></tr>');
+        }
+
+        function showAddCourseModal() {
+            document.getElementById('modal-title').innerText = 'Thêm khóa học mới';
+            document.getElementById('course_id_hidden').value = '';
+            document.getElementById('course-form').reset();
+            document.getElementById('courseModal').style.display = 'flex';
+        }
+
+        function showEditCourseModal(id) {
+            const course = allCourses.find(c => String(c.id) === String(id));
+            if (!course) return;
+
+            document.getElementById('modal-title').innerText = 'Chỉnh sửa khóa học';
+            document.getElementById('course_id_hidden').value = course.id;
+            document.getElementById('course_title').value = course.title;
+            document.getElementById('course_price').value = course.price;
+            document.getElementById('course_img').value = course.img;
+            document.getElementById('course_author').value = course.author;
+            document.getElementById('course_text').value = course.text;
+
+            document.getElementById('courseModal').style.display = 'flex';
+        }
+
+        function closeCourseModal() {
+            document.getElementById('courseModal').style.display = 'none';
+        }
+
+        document.getElementById('course-form').onsubmit = function (e) {
+            e.preventDefault();
+            const btn = document.getElementById('save_course_btn');
+            const courseId = document.getElementById('course_id_hidden').value;
+
+            const formData = new FormData();
+            formData.append('type', courseId ? 'update_course' : 'add_course');
+            if (courseId) formData.append('id', courseId);
+
+            formData.append('title', document.getElementById('course_title').value);
+            formData.append('price', document.getElementById('course_price').value);
+            formData.append('img', document.getElementById('course_img').value);
+            formData.append('author', document.getElementById('course_author').value);
+            formData.append('text', document.getElementById('course_text').value);
+
+            btn.disabled = true; btn.innerText = 'Đang lưu...';
+            fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' })
+                .then(() => {
+                    showToast(courseId ? 'Đã cập nhật!' : 'Đã thêm mới!', 'success');
+                    closeCourseModal(); loadCourses();
+                    btn.disabled = false; btn.innerText = 'Lưu khóa học';
+                })
+                .catch(() => {
+                    showToast('Lỗi khi lưu!', 'error');
+                    btn.disabled = false; btn.innerText = 'Lưu khóa học';
+                });
+        };
+
+        function deleteCourse(id) {
+            if (confirm('Xóa khóa học này?')) {
+                const formData = new FormData();
+                formData.append('type', 'delete_course');
+                formData.append('id', id);
+                fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' })
+                    .then(() => { showToast('Đã xóa!', 'success'); loadCourses(); });
+            }
+        }
+        // --- Category Management Logic ---
+        var allCategories = [];
+
+        function loadCategories() {
+            const tbody = document.getElementById('category_list_body');
+            tbody.innerHTML = '<tr><td colspan="3" class="text-center">Đang tải dữ liệu...</td></tr>';
+            fetch(`${scriptURL}?type=get_categories&t=${new Date().getTime()}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.result === 'success') {
+                        allCategories = data.categories;
+                        renderCategories(allCategories);
+                    }
+                });
+        }
+
+        function renderCategories(cats) {
+            const tbody = document.getElementById('category_list_body');
+            tbody.innerHTML = '';
+            cats.forEach(c => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <div class="cat-icon-circle">
+                            <i class="${c.icon || 'fas fa-folder'}"></i>
+                        </div>
+                    </td>
+                    <td style="font-weight: 600;">${c.name}</td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn-action btn-edit" onclick="showEditCategoryModal('${c.id}')" title="Chỉnh sửa"><i class="fas fa-edit"></i></button>
+                            <button class="btn-action btn-delete" onclick="deleteCategory('${c.id}')" title="Xóa"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function updateCatPreview() {
+            const nameInput = document.getElementById('category_name');
+            const iconInput = document.getElementById('category_icon');
+            const previewIcon = document.getElementById('current-icon-preview');
+            const previewName = document.getElementById('category-preview-name');
+
+            if (nameInput && previewName) {
+                previewName.innerText = nameInput.value.trim() || 'Chưa nhập tên...';
+                previewName.style.color = nameInput.value.trim() ? 'var(--dark)' : '#b2bec3';
+            }
+
+            if (iconInput && previewIcon) {
+                const iconClass = iconInput.value.trim() || 'fas fa-folder';
+                previewIcon.innerHTML = `<i class="${iconClass}"></i>`;
+            }
+        }
+
+        function showAddCategoryModal() {
+            document.getElementById('category-modal-title').innerText = 'Thêm danh mục';
+            document.getElementById('category_id_hidden').value = '';
+            document.getElementById('category_name').value = '';
+            document.getElementById('category_icon').value = 'fas fa-folder';
+            updateCatPreview();
+            document.getElementById('categoryModal').style.display = 'flex';
+        }
+
+        function showEditCategoryModal(id) {
+            const cat = allCategories.find(c => c.id === id);
+            if (!cat) return;
+            document.getElementById('category-modal-title').innerText = 'Sửa danh mục';
+            document.getElementById('category_id_hidden').value = cat.id;
+            document.getElementById('category_name').value = cat.name;
+            document.getElementById('category_icon').value = cat.icon || 'fas fa-folder';
+            updateCatPreview();
+            document.getElementById('categoryModal').style.display = 'flex';
+        }
+
+        function closeCategoryModal() {
+            document.getElementById('categoryModal').style.display = 'none';
+        }
+
+        document.getElementById('category-form').onsubmit = function (e) {
+            e.preventDefault();
+            const btn = document.getElementById('save_category_btn');
+            const catId = document.getElementById('category_id_hidden').value;
+
+            const formData = new FormData();
+            formData.append('type', catId ? 'update_category' : 'add_category');
+            if (catId) formData.append('id', catId);
+            formData.append('name', document.getElementById('category_name').value);
+            formData.append('icon', document.getElementById('category_icon').value);
+
+            btn.disabled = true; btn.innerText = 'Đang lưu...';
+            fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' })
+                .then(() => {
+                    showToast(catId ? 'Đã cập nhật!' : 'Đã thêm mới!', 'success');
+                    closeCategoryModal(); loadCategories();
+                    btn.disabled = false; btn.innerText = 'Lưu danh mục';
+                })
+                .catch(() => {
+                    showToast('Lỗi khi lưu!', 'error');
+                    btn.disabled = false; btn.innerText = 'Lưu danh mục';
+                });
+        };
+
+        function deleteCategory(id) {
+            if (confirm('Xóa danh mục này?')) {
+                const formData = new FormData();
+                formData.append('type', 'delete_category');
+                formData.append('id', id);
+                fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' })
+                    .then(() => { showToast('Đã xóa!', 'success'); loadCategories(); });
+            }
+        }
+
+        // --- User Management Logic ---
+
+        function loadUsers() {
+            const tbody = document.getElementById('user_list_body');
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center">Đang tải dữ liệu...</td></tr>';
+
+            const fetchUrl = `${scriptURL}?type=get_users&t=${new Date().getTime()}`;
+            console.log('Fetching users from:', fetchUrl);
+
+            fetch(fetchUrl)
+                .then(res => {
+                    if (!res.ok) throw new Error('Network response was not ok: ' + res.status);
+                    return res.json();
+                })
+                .then(data => {
+                    console.log('User data received:', data);
+                    if (data.result === 'success') {
+                        allUsers = data.users;
+                        renderUsers(allUsers);
+                        updateDashboardStats(); // Cập nhật thống kê
+                    } else {
+                        tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Lỗi từ script: ' + (data.message || 'Không xác định') + '</td></tr>';
+                    }
+                })
+                .catch(err => {
+                    console.error('Fetch error details:', err);
+                    tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Lỗi kết nối: ' + err.message + '<br><small>Kiểm tra Console (F12) để xem chi tiết</small></td></tr>';
+                });
+        }
+
+        function renderUsers(users) {
+            const tbody = document.getElementById('user_list_body');
+            tbody.innerHTML = '';
+            users.forEach(u => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight: 600;">${u.name || 'N/A'}</td>
+                    <td style="color: #636e72;">${u.email}</td>
+                    <td><span class="status-badge ${u.role === 'admin' ? 'status-success' : 'status-info'}">${u.role}</span></td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn-action btn-edit" onclick="showEditUserModal('${u.email}')" title="Sửa"><i class="fas fa-edit"></i></button>
+                            <button class="btn-action btn-delete" onclick="deleteUser('${u.email}')" title="Xóa"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterUsers() {
+            if (!Array.isArray(allUsers)) return;
+            const query = document.getElementById('user-search').value.toLowerCase();
+            const filtered = allUsers.filter(u =>
+                u.email.toLowerCase().includes(query) ||
+                (u.name && u.name.toLowerCase().includes(query))
+            );
+            renderUsers(filtered);
+        }
+
+        function showCreateUserModal() {
+            document.getElementById('user-modal-title').innerText = 'Thêm người dùng mới';
+            document.getElementById('edit_user_original_email').value = '';
+            document.getElementById('edit_user_name').value = '';
+            document.getElementById('edit_user_email').value = '';
+            document.getElementById('edit_user_role').value = 'user';
+            document.getElementById('edit_user_password').value = '';
+            document.getElementById('edit_user_password').required = true;
+            document.getElementById('edit_user_password').placeholder = 'Nhập mật khẩu cho user mới';
+
+            document.getElementById('userModal').style.display = 'flex';
+        }
+
+        function showEditUserModal(email) {
+            const user = allUsers.find(u => u.email === email);
+            if (!user) return;
+
+            document.getElementById('user-modal-title').innerText = 'Chỉnh sửa người dùng';
+            document.getElementById('edit_user_original_email').value = user.email;
+            document.getElementById('edit_user_name').value = user.name || '';
+            document.getElementById('edit_user_email').value = user.email;
+            document.getElementById('edit_user_role').value = user.role || 'user';
+            document.getElementById('edit_user_password').value = '';
+            document.getElementById('edit_user_password').required = false;
+            document.getElementById('edit_user_password').placeholder = 'Để trống nếu không muốn đổi';
+
+            document.getElementById('userModal').style.display = 'flex';
+        }
+
+        function closeUserModal() {
+            document.getElementById('userModal').style.display = 'none';
+        }
+
+        function handleUserFormSubmit(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const btn = document.getElementById('save_user_btn');
+            const originalEmail = document.getElementById('edit_user_original_email').value;
+            const isCreation = !originalEmail;
+
+            console.log('Form submitted, isCreation:', isCreation);
+
+            // Sử dụng FormData giống như đăng ký từ web
+            const formData = new FormData();
+            formData.append('type', isCreation ? 'add_user' : 'update_user');
+            if (!isCreation) formData.append('original_email', originalEmail);
+
+            formData.append('name', document.getElementById('edit_user_name').value);
+            formData.append('email', document.getElementById('edit_user_email').value);
+            formData.append('role', document.getElementById('edit_user_role').value);
+
+            const newPass = document.getElementById('edit_user_password').value;
+            if (newPass) formData.append('password', newPass);
+
+            if (isCreation) formData.append('timestamp', new Date().toLocaleString('vi-VN'));
+
+            // Sử dụng submitToGoogleSheets giống như registration
+            if (typeof submitToGoogleSheets === 'function') {
+                submitToGoogleSheets(
+                    formData,
+                    btn,
+                    isCreation ? 'Đã thêm người dùng thành công!' : 'Đã cập nhật người dùng!',
+                    () => {
+                        closeUserModal();
+                        loadUsers();
+                    }
+                );
+            } else {
+                btn.disabled = true;
+                fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' })
+                    .then(() => {
+                        showToast(isCreation ? 'Đã thêm thành công!' : 'Đã cập nhật!', 'success');
+                        closeUserModal();
+                        loadUsers();
+                        btn.disabled = false;
+                    });
+            }
+            return false;
+        }
+
+        function deleteUser(email) {
+            if (confirm(`Bạn có chắc muốn xóa người dùng ${email}?`)) {
+                const formData = new FormData();
+                formData.append('type', 'delete_user');
+                formData.append('email', email);
+                fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' })
+                    .then(() => {
+                        showToast('Đã xóa người dùng!', 'success');
+                        loadUsers();
+                    });
+            }
+        }
+
+        // --- Log Management Logic ---
+        var allLogs = [];
+
+        function loadLogs() {
+            const tbody = document.getElementById('log_list_body');
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center">Đang tải dữ liệu nhật ký...</td></tr>';
+
+            const fetchUrl = `${scriptURL}?type=get_logs&t=${new Date().getTime()}`;
+            console.log('Fetching logs from:', fetchUrl);
+
+            fetch(fetchUrl)
+                .then(res => {
+                    if (!res.ok) throw new Error('Network response was not ok: ' + res.status);
+                    return res.json();
+                })
+                .then(data => {
+                    console.log('Log data received:', data);
+                    if (data.result === 'success') {
+                        allLogs = data.logs || [];
+                        renderLogs(allLogs);
+                        updateDashboardStats(); // Cập nhật thống kê
+                    } else {
+                        tbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger">Lỗi từ script: ' + (data.message || 'Không xác định') + '</td></tr>';
+                    }
+                })
+                .catch(err => {
+                    console.error('Fetch error details:', err);
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger">' +
+                        'Lỗi kết nối: ' + err.message + '<br>' +
+                        '<small>Mẹo: Đảm bảo bạn đã cập nhật Google Apps Script và Deploy lại.</small></td></tr>';
+                });
+        }
+
+        function renderLogs(logs) {
+            const tbody = document.getElementById('log_list_body');
+            tbody.innerHTML = '';
+            if (!logs || logs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center">Không tìm thấy hoạt động nào</td></tr>';
+                return;
+            }
+            logs.forEach(l => {
+                const tr = document.createElement('tr');
+                const isImportant = isLogImportant(l);
+                if (isImportant) tr.style.backgroundColor = 'rgba(255, 182, 6, 0.05)';
+
+                tr.innerHTML = `
+                    <td style="white-space: nowrap;">${l.timestamp || 'N/A'}</td>
+                    <td>${l.user || 'Guest'}</td>
+                    <td><span class="status-badge ${isImportant ? 'status-success' : 'status-info'}">${l.action || 'N/A'}</span></td>
+                    <td style="max-width: 300px; white-space: normal; font-size: 13px;">${l.details || 'N/A'}</td>
+                    <td style="font-size: 12px; color: #6a6f73;">${formatUrl(l.url)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function isLogImportant(log) {
+            const importantActions = ['Login', 'Logout', 'Order', 'Add Course', 'Update User', 'Delete Course', 'Admin'];
+            const action = log.action || '';
+            const details = log.details || '';
+
+            return importantActions.some(ia => action.includes(ia) || details.includes(ia));
+        }
+
+        function formatUrl(url) {
+            if (!url) return 'N/A';
+            try {
+                const parts = url.split('/');
+                return parts[parts.length - 1] || 'index.html';
+            } catch (e) { return url; }
+        }
+
+        function filterLogs() {
+            if (!Array.isArray(allLogs)) return;
+            const query = document.getElementById('log-search').value.toLowerCase();
+            const filterType = document.getElementById('log-filter-type').value;
+
+            const filtered = allLogs.filter(l => {
+                const matchesSearch = (l.user && l.user.toLowerCase().includes(query)) ||
+                    (l.action && l.action.toLowerCase().includes(query)) ||
+                    (l.details && l.details.toLowerCase().includes(query));
+
+                let matchesType = true;
+                if (filterType === 'important') {
+                    matchesType = isLogImportant(l);
+                } else if (filterType !== 'all') {
+                    matchesType = l.action && l.action.includes(filterType);
+                }
+
+                return matchesSearch && matchesType;
+            });
+            renderLogs(filtered);
+        }
+
+        function updateDashboardStats() {
+            // 1. Cập nhật doanh thu và số lượng đơn hàng
+            if (allOrders && allOrders.length > 0) {
+                document.getElementById('stat-orders').innerText = allOrders.length;
+                let revenue = 0;
+                allOrders.forEach(o => {
+                    let totalStr = String(o.total || '0').replace(/[^0-9]/g, '');
+                    revenue += parseInt(totalStr) || 0;
+                });
+                document.getElementById('stat-revenue').innerText = revenue.toLocaleString('vi-VN') + 'đ';
+            }
+
+            // 2. Cập nhật số lượng học viên
+            if (allUsers && allUsers.length > 0) {
+                document.getElementById('stat-users').innerText = allUsers.length;
+            }
+
+            // 3. Cập nhật lượt truy cập hôm nay
+            if (allLogs && allLogs.length > 0) {
+                const todayStr = new Date().toLocaleDateString('vi-VN');
+                const uniqueVisitors = new Set();
+                const todayLogs = allLogs.filter(l => {
+                    // Check timestamp string (assuming DD/MM/YYYY format or similar)
+                    const isToday = l.timestamp && l.timestamp.includes(todayStr);
+                    const isPageView = l.action === 'View Page';
+                    if (isToday && isPageView) {
+                        // Count unique visitors by user/guest name
+                        uniqueVisitors.add(l.user || 'Guest');
+                        return true;
+                    }
+                    return false;
+                });
+                document.getElementById('stat-traffic').innerText = todayLogs.length; // Show total today page views
+                // If you want unique visitors: document.getElementById('stat-traffic').innerText = uniqueVisitors.size;
+            }
+        }
+    </script>
+</body>
+
+</html>

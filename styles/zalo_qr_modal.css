@@ -1,0 +1,92 @@
+/* Zalo QR Modal Styles */
+
+.zalo-qr-modal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+}
+
+.zalo-qr-modal-content {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    position: relative;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.zalo-qr-close {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #999;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.zalo-qr-close:hover {
+    color: #333;
+}
+
+.zalo-qr-modal-content h3 {
+    color: #0068FF;
+    margin-bottom: 20px;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.zalo-qr-image {
+    width: 250px;
+    height: 250px;
+    margin: 20px auto;
+    display: block;
+    border: 3px solid #0068FF;
+    border-radius: 8px;
+    padding: 10px;
+    background: white;
+}
+
+.zalo-qr-modal-content p {
+    color: #666;
+    font-size: 14px;
+    margin-top: 15px;
+}
+
+@media (max-width: 575px) {
+    .zalo-qr-modal-content {
+        padding: 20px;
+    }
+
+    .zalo-qr-image {
+        width: 200px;
+        height: 200px;
+    }
+
+    .zalo-qr-modal-content h3 {
+        font-size: 18px;
+    }
+}
